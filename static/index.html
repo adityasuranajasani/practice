@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InsightForge • Web Research Assistant</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- App Container -->
+  <div class="app-layout">
+    <!-- Navbar -->
+    <header class="navbar no-print">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            <line x1="11" y1="8" x2="11" y2="14"></line>
+            <line x1="8" y1="11" x2="14" y2="11"></line>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">InsightForge</span>
+          <span class="brand-tag">Autonomous Research Assistant</span>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <button id="historyToggleBtn" class="btn btn-secondary btn-sm" title="View past research dossiers">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>History</span>
+          <span id="historyCountBadge" class="badge-pill">0</span>
+        </button>
+
+        <button id="themeToggleBtn" class="btn btn-icon" title="Toggle theme">
+          <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-container">
+      <!-- Search & Configuration Section -->
+      <section class="search-section card no-print">
+        <div class="search-header">
+          <h2>Synthesize Web Research on Any Topic</h2>
+          <p class="subtitle">Extracts verified sources, evaluates credibility, detects conflicting claims, and generates a structured research dossier.</p>
+        </div>
+
+        <form id="researchForm" class="research-form">
+          <div class="input-wrapper">
+            <div class="search-prefix-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+            </div>
+            <input 
+              type="text" 
+              id="topicInput" 
+              class="search-input" 
+              placeholder="e.g. Solid-state battery commercialization, Quantum computing in drug discovery, AGI safety frameworks..." 
+              required 
+              autocomplete="off"
+            />
+            <button type="submit" id="submitBtn" class="btn btn-primary">
+              <span class="btn-text">Generate Research</span>
+              <svg class="btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
+
+          <div class="search-controls">
+            <div class="control-group">
+              <label for="focusSelect">Research Focus:</label>
+              <select id="focusSelect" class="form-select">
+                <option value="general">🌐 General / Multi-disciplinary</option>
+                <option value="technology">💻 Technology & Engineering</option>
+                <option value="science">🔬 Science & Health</option>
+                <option value="business">📈 Business & Market Dynamics</option>
+                <option value="policy">⚖️ Policy, Law & Governance</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="depthSelect">Research Depth:</label>
+              <select id="depthSelect" class="form-select">
+                <option value="comprehensive" selected>📊 Comprehensive (Standard)</option>
+                <option value="deep_dive">🔍 Deep Dive (Extended Analysis)</option>
+                <option value="quick_summary">⚡ Quick Briefing</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Suggested Topic Chips -->
+          <div class="topic-chips-wrapper">
+            <span class="chips-label">Popular topics:</span>
+            <div class="chips-list">
+              <button type="button" class="chip-btn" data-topic="Solid State Batteries for Electric Vehicles" data-focus="technology">🔋 Solid State Batteries</button>
+              <button type="button" class="chip-btn" data-topic="Quantum Computing in Drug Discovery" data-focus="science">🧬 Quantum Drug Discovery</button>
+              <button type="button" class="chip-btn" data-topic="Artificial General Intelligence Governance" data-focus="policy">🤖 AGI Governance</button>
+              <button type="button" class="chip-btn" data-topic="Perovskite Solar Cells Efficiency" data-focus="technology">☀️ Perovskite Solar Cells</button>
+              <button type="button" class="chip-btn" data-topic="Global Semiconductor Supply Chain Resilience" data-focus="business">🏭 Semiconductor Supply Chain</button>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- Loading / Progress State -->
+      <section id="progressSection" class="progress-section card hidden no-print">
+        <div class="progress-header">
+          <div class="spinner-ring"></div>
+          <div>
+            <h3 id="progressStageTitle">Analyzing topic & structuring research queries...</h3>
+            <p id="progressStageSubtitle" class="text-muted">Interrogating live web indices and academic repositories</p>
+          </div>
+        </div>
+        <div class="progress-bar-container">
+          <div id="progressBar" class="progress-bar" style="width: 25%;"></div>
+        </div>
+        <div class="progress-steps-list">
+          <div class="step-item active" id="step1">
+            <span class="step-dot"></span>
+            <span>1. Query Decomposition</span>
+          </div>
+          <div class="step-item" id="step2">
+            <span class="step-dot"></span>
+            <span>2. Source & Credibility Audit</span>
+          </div>
+          <div class="step-item" id="step3">
+            <span class="step-dot"></span>
+            <span>3. Conflict Detection & Synthesis</span>
+          </div>
+          <div class="step-item" id="step4">
+            <span class="step-dot"></span>
+            <span>4. Dossier & Bibliography Finalization</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Research Results Container -->
+      <section id="resultsSection" class="results-section hidden">
+        <!-- Results Header Card -->
+        <div class="results-header-card card">
+          <div class="results-title-bar">
+            <div>
+              <div class="badges-row">
+                <span id="badgeFocus" class="badge badge-primary">Technology</span>
+                <span id="badgeDepth" class="badge badge-secondary">Comprehensive</span>
+                <span id="badgeDate" class="badge badge-outline">Just now</span>
+                <button id="favoriteBtn" class="btn btn-star btn-sm" title="Bookmark / Favorite Dossier">
+                  <span id="favoriteStarIcon">☆</span>
+                  <span id="favoriteBtnText">Favorite</span>
+                </button>
+              </div>
+              <h1 id="resultTopicTitle" class="result-topic-title">Topic Title</h1>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="report-actions no-print">
+              <button id="exportPdfBtn" class="btn btn-primary btn-sm" title="Export / Print Document to PDF">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                  <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+                <span>Export PDF</span>
+              </button>
+
+              <button id="copyMarkdownBtn" class="btn btn-secondary btn-sm" title="Copy report as Markdown">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy Markdown</span>
+              </button>
+
+              <button id="downloadMdBtn" class="btn btn-secondary btn-sm" title="Download Markdown file">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Download .md</span>
+              </button>
+
+              <button id="downloadJsonBtn" class="btn btn-secondary btn-sm" title="Download Raw Data">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                <span>Export JSON</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Stats Strip -->
+          <div class="stats-strip">
+            <div class="stat-item">
+              <span class="stat-value" id="statSourcesCount">0</span>
+              <span class="stat-label">Web Sources</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="statAvgCredibility">0/100</span>
+              <span class="stat-label">Avg Credibility</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="statConflicts">0</span>
+              <span class="stat-label">Contested Points</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="statWordCount">0</span>
+              <span class="stat-label">Report Words</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="statReadTime">0 min</span>
+              <span class="stat-label">Estimated Read</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="statDuration">0.0s</span>
+              <span class="stat-label">Research Time</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="tabs-nav no-print">
+          <button class="tab-btn active" data-tab="reportTab">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <span>Structured Report</span>
+          </button>
+
+          <button class="tab-btn" data-tab="conflictsTab">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>Conflicting Information (<span id="tabConflictsCount">0</span>)</span>
+          </button>
+
+          <button class="tab-btn" data-tab="sourcesTab">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            <span>Sources & Credibility (<span id="tabSourcesCount">0</span>)</span>
+          </button>
+
+          <button class="tab-btn" data-tab="bibliographyTab">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <span>Academic Bibliography</span>
+          </button>
+
+          <button class="tab-btn" data-tab="markdownTab">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Markdown View</span>
+          </button>
+        </div>
+
+        <!-- Tab 1: Structured Report -->
+        <div id="reportTab" class="tab-content active print-block">
+          <!-- Executive Summary -->
+          <div class="card report-section-card">
+            <div class="section-title-wrap">
+              <div class="section-icon">📌</div>
+              <h3>Executive Summary</h3>
+            </div>
+            <div id="executiveSummaryContent" class="executive-summary-box"></div>
+          </div>
+
+          <!-- Key Insights Grid -->
+          <div class="card report-section-card">
+            <div class="section-title-wrap">
+              <div class="section-icon">💡</div>
+              <h3>Core Insights & Validated Findings</h3>
+            </div>
+            <div id="keyInsightsGrid" class="insights-grid"></div>
+          </div>
+
+          <!-- Thematic In-Depth Analysis -->
+          <div class="card report-section-card">
+            <div class="section-title-wrap">
+              <div class="section-icon">📑</div>
+              <h3>Thematic Analysis & Breakdown</h3>
+            </div>
+            <div id="thematicSectionsContainer" class="thematic-sections"></div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Conflicting Information & Perspectives -->
+        <div id="conflictsTab" class="tab-content print-block">
+          <div class="card report-section-card">
+            <div class="section-title-wrap">
+              <div class="section-icon">⚖️</div>
+              <div>
+                <h3>Conflicting Information & Perspectives Matrix</h3>
+                <p class="text-muted">Detected disagreements, disputed timelines, and methodological debate across surveyed sources</p>
+              </div>
+            </div>
+            <div id="conflictsContainer" class="conflicts-container"></div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Sources & Credibility -->
+        <div id="sourcesTab" class="tab-content print-block">
+          <div class="card report-section-card">
+            <div class="section-title-wrap">
+              <div class="section-icon">🛡️</div>
+              <div>
+                <h3>Verified Web Sources & Credibility Audit</h3>
+                <p class="text-muted">Domain authority metrics, editorial review tiers, trust scores, and evidence extracts</p>
+              </div>
+            </div>
+            <div id="sourcesGrid" class="sources-grid"></div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Academic Bibliography -->
+        <div id="bibliographyTab" class="tab-content print-block">
+          <div class="card report-section-card">
+            <div class="section-title-wrap">
+              <div class="section-icon">📚</div>
+              <div>
+                <h3>Formal Academic Bibliography</h3>
+                <p class="text-muted">Standardized citations in APA and IEEE formats ready for academic and professional export</p>
+              </div>
+            </div>
+            <div id="bibliographyList" class="bibliography-list"></div>
+          </div>
+        </div>
+
+        <!-- Tab 5: Markdown View -->
+        <div id="markdownTab" class="tab-content no-print">
+          <div class="card report-section-card">
+            <div class="markdown-preview-header">
+              <h3>Formatted Markdown Document</h3>
+              <button id="copyMdInnerBtn" class="btn btn-sm btn-primary">Copy Text</button>
+            </div>
+            <pre id="rawMarkdownPreview" class="code-preview"></pre>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- History Drawer -->
+    <aside id="historyDrawer" class="history-drawer no-print">
+      <div class="drawer-header">
+        <div class="drawer-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <h3>Research History</h3>
+        </div>
+        <button id="closeHistoryBtn" class="btn btn-icon btn-sm" aria-label="Close History">✕</button>
+      </div>
+
+      <!-- History Search & Filter Bar -->
+      <div class="drawer-filter-bar">
+        <div class="history-search-wrapper">
+          <input type="text" id="historySearchInput" placeholder="Search saved topics..." autocomplete="off">
+        </div>
+        <div class="history-filter-actions">
+          <button id="historyFavFilterBtn" class="btn btn-sm btn-secondary" title="Show Favorites Only">
+            <span id="favFilterIcon">★</span> Favorites
+          </button>
+          <button id="clearAllHistoryBtn" class="btn btn-sm btn-outline-danger" title="Clear all history">
+            Clear All
+          </button>
+        </div>
+      </div>
+
+      <div class="drawer-body">
+        <div id="historyList" class="history-list">
+          <div class="empty-state">No research history found.</div>
+        </div>
+      </div>
+    </aside>
+
+    <div id="drawerOverlay" class="drawer-overlay no-print"></div>
+
+    <!-- Floating Citation Tooltip -->
+    <div id="citationTooltip" class="citation-tooltip"></div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast no-print">Action completed successfully</div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
